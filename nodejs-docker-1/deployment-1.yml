@@ -2,30 +2,56 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: nodejs-api-1
-  name: nodejs-api-1
+    app: nodejs-apm-1
+    tags.datadoghq.com/env: "devlab"
+    tags.datadoghq.com/version: "1"
+    tags.datadoghq.com/service: "nodejs-apm-1"
+  name: nodejs-apm-1
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: nodejs-api-1
+      app: nodejs-apm-1
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: nodejs-api-1
+        app: nodejs-apm-1
         version: "1"
+        tags.datadoghq.com/env: "devlab"
+        tags.datadoghq.com/version: "1"
     spec:
       containers:
-      - image: nodejs-server-1
-        name: nodejs-server-1
-        imagePullPolicy: Never
+      - image: absalon1000rr/nodejs-apm-1
+        name: nodejs-apm-1
+        env:
+          - name: DD_AGENT_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+          - name: DD_ENV
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/env']
+          - name: DD_VERSION
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/version']
+          - name: DD_SERVICE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/service']
+          - name: DD_LOGS_INJECTION
+            value: "true"
+          - name: DD_APM_NON_LOCAL_TRAFFIC
+            value: "true"
+          - name: svc_host
+            value: "10.0.0.156"
+          - name: svc_port
+            value: "8082"
+        #imagePullPolicy: Never
         resources: {}
         ports:
           - containerPort: 8081
-        env:
-        - name: svc_host
-          value: nodejs-api2-svc
-        - name: svc_port
-          value: "8082"
+        

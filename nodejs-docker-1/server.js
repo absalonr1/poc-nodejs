@@ -1,7 +1,10 @@
 //'use strict';
-
+const tracer = require('dd-trace').init({
+  logInjection: true
+});
 const express = require('express');
 const http = require("http");
+
 
 // Constants
 const PORT = 8081;

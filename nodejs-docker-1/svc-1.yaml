@@ -7,10 +7,11 @@ spec:
   # The service becomes a network endpoint for either other services
   # or maybe external users to connect to (eg browser)
   selector:
-    app: nodejs-api-1
+    app: nodejs-apm-1
   ports:
     - protocol: TCP
+      name: tcp-nodejs-api1-svc
       targetPort: 8081 # donde escucha el pod
       port: 8081 # donde escucha e service
-      nodePort: 30082
-  type: NodePort
+      #nodePort: 30080
+  type: ClusterIP

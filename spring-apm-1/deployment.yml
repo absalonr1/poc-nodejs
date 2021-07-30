@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: spring-apm-1
+    tags.datadoghq.com/env: "devlab"
+    tags.datadoghq.com/version: "1"
+    tags.datadoghq.com/service: "spring-apm-1"
+  name: spring-apm-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-apm-1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: spring-apm-1
+        version: "1"
+        tags.datadoghq.com/env: "devlab"
+        tags.datadoghq.com/version: "1"
+    spec:
+      containers:
+      - image: absalon1000rr/spring-apm-1
+        name: spring-apm-1
+        env:
+          - name: DD_AGENT_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+          - name: DD_ENV
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/env']
+          - name: DD_VERSION
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/version']
+          - name: DD_SERVICE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/service']
+          - name: DD_LOGS_INJECTION
+            value: "true"
+          - name: DD_APM_NON_LOCAL_TRAFFIC
+            value: "true"
+          #- name: svc_host
+          #  value: "10.0.0.194"
+          #- name: svc_port
+          #  value: "8081"
+        #imagePullPolicy: Never
+        resources: {}
+        ports:
+          - containerPort: 8080
+        

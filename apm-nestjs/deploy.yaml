@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: apm-nest-1
+    tags.datadoghq.com/env: "devlab"
+    tags.datadoghq.com/version: "1"
+    tags.datadoghq.com/service: "apm-nest-1"
+  name: apm-nest-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apm-nest-1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: apm-nest-1
+        version: "1"
+        tags.datadoghq.com/env: "devlab"
+        tags.datadoghq.com/version: "1"
+    spec:
+      containers:
+      - image: 311028179126.dkr.ecr.us-west-2.amazonaws.com/bx-ms-super-app-backend:develop-4c71f9e2bbfc25729e67de8ef987b5e034403e28
+        name: apm-nest-1
+        env:
+          - name: DD_AGENT_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+          - name: DD_ENV
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/env']
+          - name: DD_VERSION
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/version']
+          - name: DD_SERVICE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/service']
+          - name: DD_LOGS_INJECTION
+            value: "true"
+          - name: DD_APM_NON_LOCAL_TRAFFIC
+            value: "true"
+          - name: aws_region
+            value: "us-west-2"
+        #imagePullPolicy: Never
